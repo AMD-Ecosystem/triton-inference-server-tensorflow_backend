@@ -156,7 +156,7 @@ if (${TRITON_TENSORFLOW_DOCKER_BUILD})
       ${TRITON_TENSORFLOW_CC_LIBNAME}.${TRITON_TENSORFLOW_VERSION}
       ${TRITON_TENSORFLOW_FW_LIBNAME}.${TRITON_TENSORFLOW_VERSION}
       LICENSE.tensorflow
-    COMMAND if [ "${TRITON_TENSORFLOW_DOCKER_IMAGE}" == rocm/* ] \; then  docker pull ${TRITON_TENSORFLOW_DOCKER_IMAGE} \; fi \;
+    COMMAND if echo "${TRITON_TENSORFLOW_DOCKER_IMAGE}" | grep -q '^rocm/' \; then docker pull ${TRITON_TENSORFLOW_DOCKER_IMAGE} \; fi \;
     COMMAND docker stop tensorflow_backend_tflib || echo "error ignored..." || true
     COMMAND docker rm tensorflow_backend_tflib || echo "error ignored..." || true
     COMMAND docker create --name tensorflow_backend_tflib ${TRITON_TENSORFLOW_DOCKER_IMAGE}
