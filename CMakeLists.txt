@@ -162,7 +162,7 @@ if (${TRITON_TENSORFLOW_DOCKER_BUILD})
     COMMAND docker create --name tensorflow_backend_tflib ${TRITON_TENSORFLOW_DOCKER_IMAGE}
     COMMAND docker cp -L tensorflow_backend_tflib:${TRITON_TENSORFLOW_PYTHON_PATH}/${TRITON_TENSORFLOW_CC_LIBNAME}.${TRITON_TENSORFLOW_VERSION} ${TRITON_TENSORFLOW_CC_LIBNAME}.${TRITON_TENSORFLOW_VERSION}
     COMMAND docker cp tensorflow_backend_tflib:${TRITON_TENSORFLOW_PYTHON_PATH}/${TRITON_TENSORFLOW_FW_LIBNAME}.${TRITON_TENSORFLOW_VERSION} ${TRITON_TENSORFLOW_FW_LIBNAME}.${TRITON_TENSORFLOW_VERSION}
-    COMMAND docker cp tensorflow_backend_tflib:/tensorflow/LICENSE LICENSE.tensorflow
+    COMMAND docker cp tensorflow_backend_tflib:/workspace/tensorflow-upstream/LICENSE LICENSE.tensorflow
     COMMAND docker stop tensorflow_backend_tflib || echo "error ignored..." || true
     COMMAND docker rm tensorflow_backend_tflib
 
