@@ -40,9 +40,9 @@
 #include "triton/backend/backend_output_responder.h"
 
 #define TRITON_ENABLE_ROCM 1
-#ifdef TRITON_ENABLE_GPU
+#if defined(TRITON_ENABLE_GPU) || defined(TRITON_ENABLE_ROCM)
 #include <hip/hip_runtime_api.h>
-#endif  // TRITON_ENABLE_GPU
+#endif  // TRITON_ENABLE_GPU || TRITON_ENABLE_ROCM
 
 //
 // TF Backend that implements the TRITONBACKEND API.
@@ -50,9 +50,9 @@
 
 namespace triton { namespace backend { namespace tensorflow {
 
-#ifndef TRITON_ENABLE_GPU
+#if !defined(TRITON_ENABLE_GPU) && !defined(TRITON_ENABLE_ROCM)
 using hipStream_t = void*;
-#endif  // !TRITON_ENABLE_GPU
+#endif  // !TRITON_ENABLE_GPU && !TRITON_ENABLE_ROCM
 
 using IONameMap = std::unordered_map<std::string, std::string>;
 using TRITONTFModelHandle = std::shared_ptr<TRITONTF_Model>;
@@ -587,7 +587,7 @@ SetStringInputTensor(
     return cuda_copy;
   }
 
-#ifdef TRITON_ENABLE_GPU
+#if defined(TRITON_ENABLE_GPU) || defined(TRITON_ENABLE_ROCM)
   if (cuda_copy) {
     hipStreamSynchronize(stream);
     cuda_copy = false;
@@ -2310,7 +2310,7 @@ ModelInstanceState::ProcessRequests(
   }
 
   // Wait for any in-flight input tensor copies to complete.
-#ifdef TRITON_ENABLE_GPU
+#if defined(TRITON_ENABLE_GPU) || defined(TRITON_ENABLE_ROCM)
   if (cuda_copy) {
     hipStreamSynchronize(RocmStream());
   }
@@ -2460,11 +2460,11 @@ ModelInstanceState::ProcessRequests(
     cuda_copy |= responder.Finalize();
   }
 
-#ifdef TRITON_ENABLE_GPU
+#if defined(TRITON_ENABLE_GPU) || defined(TRITON_ENABLE_ROCM)
   if (cuda_copy) {
     hipStreamSynchronize(RocmStream());
   }
-#endif  // TRITON_ENABLE_GPU
+#endif  // TRITON_ENABLE_GPU || TRITON_ENABLE_ROCM
 
   uint64_t exec_end_ns = 0;
   SET_TIMESTAMP(exec_end_ns);
